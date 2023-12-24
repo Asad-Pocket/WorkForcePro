@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WorkForcePro</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WorkForcePro.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WorkForcePro</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (Context.Request.Cookies["SelectedCompanyName"] == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Company" asp-action="Index">Companies</a>
+                            </li>
+                        }
+                        @if (Context.Request.Cookies["SelectedCompanyName"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index">Deparments</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Designation" asp-action="Index">Designations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Shift" asp-action="Index">Shifts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="ShowEmployeeByDepartment">Search Employee</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="ProcessAll">ProcessAll</a>
+                            </li>
+                            <!-- Display company name in the navbar if available -->
+                            <li class="nav-item" id="selectedCompanyNavItem" style="display: none;">
+                                <span class="nav-link text-dark" id="selectedCompanyNavbar"></span>
+                            </li>
+                            <!-- Display logout button if company is selected -->
+                            <li class="nav-item" id="logoutNavItem" style="display: none;">
+                                <a class="nav-link text-dark" id="logoutButton" style="cursor: pointer;">Logout</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - WorkForcePro - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Check if a company is selected
+        var isCompanySelected = @(Context.Request.Cookies["SelectedCompanyId"] != null ? "true" : "false");
+
+        // Update the visibility of the selected company name and logout button
+        if (isCompanySelected) {
+            $('#selectedCompanyNavItem').show();
+            $('#logoutNavItem').show();
+            var selectedCompanyName = '@Context.Request.Cookies["SelectedCompanyName"]';
+            $('#selectedCompanyNavbar').text('Selected Company: ' + selectedCompanyName);
+        }
+
+        // Handle logout button click
+        $('#logoutButton').click(function () {
+            // Clear the selected company in the navbar
+            $('#selectedCompanyNavItem').hide();
+            $('#logoutNavItem').hide();
+            $('#selectedCompanyNavbar').text('');
+
+            // Clear the cookie by sending a request to the backend
+            $.ajax({
+                url: '/Home/Logout',
+                method: 'POST',
+                success: function (response) {
+                    console.log("Logout response:", response);
+                    // You can add additional logic here if needed
+                },
+                error: function (error) {
+                    console.error("Logout error:", error);
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

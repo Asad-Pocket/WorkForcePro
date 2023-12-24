@@ -1,0 +1,43 @@
+﻿@model List<WorkForcePro.DtoModel.SalaryViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Salaries</title>
+    <link href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.0.6/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.0.6/dist/js/tabulator.min.js"></script>
+</head>
+<body>
+
+    <h4>Employee Salaries</h4>
+    <h5>Month: @Model[0].MonthName, Year: @Model[0].DtYear</h5>
+    <div id="salaryTable"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var table = new Tabulator("#salaryTable", {
+                data: @Html.Raw(Json.Serialize(Model)),
+                layout: "fitColumns",
+                columns: [
+                    { title: "Employee Code", field: "empCode", sorter: "number" },
+                    { title: "Employee Name", field: "empName" },
+                    { title: "Department", field: "deptName" },
+                    { title: "Designation", field: "desigName" },
+                    { title: "Month", field: "monthName" },
+                    { title: "Present", field: "present", sorter: "number" },
+                    { title: "Late", field: "late", sorter: "number" },
+                    { title: "Absent", field: "absent", sorter: "number" },
+                    { title: "Gross", field: "gross", sorter: "number" },
+                    { title: "Basic", field: "basic", sorter: "number" },
+                    { title: "HRent", field: "hRent", sorter: "number" },
+                    { title: "Medical", field: "medical", sorter: "number" },
+                    { title: "Absent Amount", field: "absentAmount", sorter: "number" },
+                    { title: "Payable Amount", field: "payableAmount", sorter: "number" },
+                    { title: "Is Paid", field: "isPaid", sorter: "boolean" },
+                ],
+            });
+        });
+    </script>
+
+</body>
+</html>
